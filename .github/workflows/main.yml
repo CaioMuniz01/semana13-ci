@@ -1,0 +1,25 @@
+name: Testes de API
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  testes-api:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v6
+      - name: Configurar o Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Instalar o Newman
+        run: npm install --global newman@6.2.1
+      - name: Rodar a coleção de testes
+        run: newman run colecao.json --timeout-request 15000 --reporters cli

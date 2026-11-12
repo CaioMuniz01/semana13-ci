@@ -1,0 +1,77 @@
+{
+  "info": {
+    "name": "Semana 13 - Testes de API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Buscar o usuário 1",
+      "request": {
+        "method": "GET",
+        "url": "https://jsonplaceholder.typicode.com/users/1"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('ID do usuário é 1', function () { pm.expect(pm.response.json().id).to.eql(1); });",
+              "pm.test('Nome preenchido', function () { pm.expect(pm.response.json().name).to.be.a('string').and.not.empty; });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Usuário inexistente",
+      "request": {
+        "method": "GET",
+        "url": "https://jsonplaceholder.typicode.com/users/9999"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status 404', function () { pm.response.to.have.status(404); });",
+              "pm.test('Objeto vazio', function () { pm.expect(pm.response.json()).to.eql({}); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Criar um post",
+      "request": {
+        "method": "POST",
+        "url": "https://jsonplaceholder.typicode.com/posts",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"title\":\"Post do trio\",\"body\":\"Aprendendo CI com Newman\",\"userId\":1}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status 201', function () { pm.response.to.have.status(201); });",
+              "pm.test('ID do post é 101', function () { pm.expect(pm.response.json().id).to.eql(101); });",
+              "pm.test('Dados do post conferem', function () { const enviado = JSON.parse(pm.request.body.raw); const recebido = pm.response.json(); pm.expect(recebido.title).to.eql(enviado.title); pm.expect(recebido.body).to.eql(enviado.body); pm.expect(recebido.userId).to.eql(enviado.userId); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
